@@ -1,23 +1,8 @@
-const mongoose = require("mongoose");
+const connectMongo = require("./tools/connect-mongo.js");
+const ZxModel = require("./models/students.js");
 
 async function main() {
-  // 连接 mongoDB 数据库
-  // mongoose.connect("mongodb://数据库的ip地址:端口号/数据库名");
-  // 如果端口号是默认端口号 27017 可以省略不写
-  await mongoose.connect("mongodb://127.0.0.1:27017/test");
-  const personSchema = new mongoose.Schema({
-    name: String,
-    age: Number,
-    gender: {
-      type: String,
-      default: "male" // 默认值
-    }
-  });
-  // 通过 schema 来创建 Model
-  // Model 代表的是数据库的集合，通过 Model 才能对数据库进行操作
-  // mongoose 会自动将集合名变成复数 zx ---> zxes
-  const ZxModel = mongoose.model("zx", personSchema);
-
+  await connectMongo("mongodb://127.0.0.1:27017/test");
   //todo 新增： 向数据库中插入一个文档
   //   ZxModel.create([
   //     {
@@ -72,14 +57,6 @@ async function main() {
   //   ZxModel.deleteOne({ name: "a" });
   //   ZxModel.deleteMany({ name: "zx" });
 }
-
-mongoose.connection.once("open", () => {
-  console.log("GodX------>log数据库连接成功");
-});
-
-mongoose.connection.once("close", () => {
-  console.log("GodX------>log数据库连接已断开");
-});
 
 main().catch((err) => console.log(err));
 //* 一般情况下，只需要连接一次，除非项目停止服务器，否则连接一般不会断开
